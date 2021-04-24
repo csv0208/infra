@@ -1,0 +1,5 @@
+{
+    "project_id": "MY-PROJECTS-ID",
+    "source_image_family": "ubuntu-1604-lts",
+    "ssh_username": "MY_USER_NAME"
+}

@@ -1,29 +1,3 @@
-terraform {
-  required_providers {
-    google = {
-      source  = "hashicorp/google"
-      version = "3.5.0"
-    }
-  }
-}
-
-
-terraform {
-  # Версия terraform
-  # required_version = "0.11.11"
-  required_version = "0.15.1"
-}
-provider "google" {
-  # Версия провайдера
-  #    version = "2.0.0"
-  #   version = "3.66.1"
-
-  # ID проекта
-  project = var.project
-
-  region = var.region
-}
-
 resource "google_compute_instance" "app" {
   name         = "reddit-app"
   machine_type = "g1-small"
@@ -32,18 +6,13 @@ resource "google_compute_instance" "app" {
 
   metadata = {
     # путь до публичного ключа
-    #    ssh-keys = "appuser:${file(var.public_key_path)}"
-    "ssh-keys" = <<EOT
-                appuser:${file(var.public_key_path)}
-                appuser1:${file(var.public_key_path)}
-                appuser2:${file(var.public_key_path)}
-            EOT
+    ssh-keys = "appuser:${file(var.public_key_path)}"
   }
 
   # определение загрузочного диска
   boot_disk {
     initialize_params {
-      image = var.disk_image
+      image = var.app_disk_image
     }
   }
 
@@ -52,26 +21,29 @@ resource "google_compute_instance" "app" {
     # сеть, к которой присоединить данный интерфейс
     network = "default"
     # использовать ephemeral IP для доступа из Интернет
-    access_config {}
+    access_config {
+      nat_ip = google_compute_address.app_ip.address
+    }
   }
 
-  connection {
+   connection {
     type  = "ssh"
     user  = "appuser"
     agent = false
     # путь до приватного ключа
     private_key = file(var.private_key_path)
     host        = google_compute_instance.app.network_interface.0.access_config.0.nat_ip
-  }
+   }
 
-  provisioner "file" {
-    source      = "files/puma.service"
-    destination = "/home/appuser/puma.service"
+    provisioner "file" {
+        source      = "../files/puma.service"
+        destination = "/home/appuser/puma.service"
+    }
 
-  }
-  provisioner "remote-exec" {
-    script = "files/deploy.sh"
-  }
+    provisioner "remote-exec" {
+        script = "../files/deploy.sh"
+    }
+
 }
 
 resource "google_compute_firewall" "firewall_puma" {
@@ -87,5 +59,9 @@ resource "google_compute_firewall" "firewall_puma" {
   source_ranges = ["0.0.0.0/0"]
   # Правило применимо для инстансов с перечисленными тэгами
   target_tags = ["reddit-app"]
+}
+
+resource "google_compute_address" "app_ip" {
+  name = "reddit-app-ip"
 }
 

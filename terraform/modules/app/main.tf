@@ -26,23 +26,23 @@ resource "google_compute_instance" "app" {
     }
   }
 
-   connection {
-    type  = "ssh"
-    user  = "appuser"
-    agent = false
-    # путь до приватного ключа
-    private_key = file(var.private_key_path)
-    host        = google_compute_instance.app.network_interface.0.access_config.0.nat_ip
-   }
-
-    provisioner "file" {
-        source      = "../files/puma.service"
-        destination = "/home/appuser/puma.service"
-    }
-
-    provisioner "remote-exec" {
-        script = "../files/deploy.sh"
-    }
+#   connection {
+#    type  = "ssh"
+#    user  = "appuser"
+#    agent = false
+#    # путь до приватного ключа
+#    private_key = file(var.private_key_path)
+#    host        = google_compute_instance.app.network_interface.0.access_config.0.nat_ip
+#   }
+#
+#    provisioner "file" {
+#        source      = "../files/puma.service"
+#        destination = "/home/appuser/puma.service"
+#    }
+#
+#    provisioner "remote-exec" {
+#        script = "../files/deploy.sh"
+#    }
 
 }
 

@@ -1,0 +1,27 @@
+---
+- name: Install ruby and bundler on app
+  hosts: all # <-- Для каких хостов будут выполняться описанные ниже таски (hosts)
+  become: true
+  tasks: # <-- Блок тасков (заданий), которые будут выполняться для данных хостов
+
+  # Установим в цикле все зависимости
+    - name: Install ruby and rubygems and required packages
+      apt: 
+        update_cache: yes
+        name: ['ruby-full', 'ruby-bundler', 'build-essential']
+        state: present
+
+    # - name: Install ruby
+    #   apt: 
+    #     name: ruby-full
+    #     state: present
+
+    # - name: Install ruby-bundler
+    #   apt: 
+    #     name: ruby-bundler
+    #     state: present        
+
+    # - name: Install build-essential
+    #   apt: 
+    #     name: build-essential
+    #     state: present

@@ -1,0 +1,7 @@
+---
+- name: Configure application host
+  hosts: app # <-- Для каких хостов будут выполняться описанные ниже таски (hosts)
+  become: true
+  roles:
+    - app
+    - jdauphant.nginx

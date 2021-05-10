@@ -3,6 +3,9 @@
 - name: Show info about the env this host belongs to
   debug: msg="This host is in {{ env }} environment!!!"
 
+- include: install_mongo.yml
+- include: config_mongo.yml
+
 #- name: "DEBUG HOSTVARS"
 #  debug: "{{ ansible_ens4.ipv4.address }}"
   # debug: msg=ansible_default_ipv4.address

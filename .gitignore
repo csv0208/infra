@@ -4,3 +4,9 @@ packer/variables.json
 *.tfstate.backup
 *.tfvars
 .terraform/
+.vagrant/
+*.log
+*.pyc
+.molecule
+.cache
+.pytest_cache
